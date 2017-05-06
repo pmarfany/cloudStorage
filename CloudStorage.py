@@ -1,7 +1,7 @@
 #!/usr/bin/python3.6
 # *-- coding: utf-8 --*
 
-import mysql.connector;
+import mysql.connector
 from mysql.connector import errorcode
 
 class CloudStorage:
@@ -20,6 +20,10 @@ class CloudStorage:
 	def __init__(self):
 		pass;
 
+	#
+	# Default connection and close operations
+	#
+
 	def connect(self):
 		try:
 			# He establish a connection with the database
@@ -37,15 +41,125 @@ class CloudStorage:
 				print(err)
 
 	def close(self):
-		# We close the database (if we opened)
+		# We close the database (if it's opened)
 		if self.__database is not None:
 			self.__database.close()
 
-	def createTable(self):
-		# https://dev.mysql.com/doc/connector-python/en/connector-python-example-ddl.html
-		pass
+	#
+	# Check data operations
+	#
 
-	def printListOfNodeTypes(self):
+	def __nodeExists(self, NodeName):
+		cursor = self.__database.cursor()
+
+		cursor.execute("SELECT * FROM NodeList WHERE NodeName IN ('%s')" % NodeName)
+
+		# Get Node
+		node = cursor.fetchone()
+
+		cursor.close()
+
+		return (node is not None);
+
+	def __nodeTypeExists(self, NodeName):
+		cursor = self.__database.cursor()
+
+		cursor.execute("SELECT * FROM NodeType WHERE NodeName IN ('%s')" % NodeName)
+
+		# Get Node
+		node = cursor.fetchone()
+
+		cursor.close()
+
+		return (node is not None);
+
+	#
+	# Insert data operations
+	#
+
+	def addNode(self, NodeName, NodeType):
+		# Create database cursor
+		cursor = self.__database.cursor()
+
+		# Check if 'NodeName' exists
+		if self.__nodeExists(NodeName):
+			raise Exception("Node %s already exists!", NodeName)
+
+		# Check if 'NodeType' existes
+		if not self.__nodeTypeExists(NodeType):
+			raise Exception("NodeType %s does not exist!", NodeType)
+
+		# Database OP strings
+		selectID = "SELECT NodeID FROM NodeType WHERE NodeName = '%s'" % NodeType
+		addnode = "INSERT INTO NodeList VALUES (DEFAULT, '%s', (%s))" % (NodeName, selectID)
+
+		# Execute command
+		cursor.execute(addnode)
+
+		# Commit changes
+		self.__database.commit()
+
+		# Close database cursor
+		cursor.close()
+
+	def addNodeType(self, NodeType):
+		# Create database cursor
+		cursor = self.__database.cursor()
+
+		# Check if 'NodeType' existes
+		if self.__nodeTypeExists(NodeType):
+			raise Exception("NodeType %s already exists!", NodeType)
+
+		# Database OP strings
+		addnodetype = "INSERT INTO NodeType VALUES (DEFAULT, '%s')" % NodeType
+
+		# Execute command
+		cursor.execute(addnodetype)
+
+		# Commit changes
+		self.__database.commit()
+
+		# Close database cursor
+		cursor.close()
+
+	def addEvent(self, NodeName, EventInfo):
+		# Create database cursor
+		cursor = self.__database.cursor()
+
+		# Check if 'NodeName' exists
+		if not self.__nodeExists(NodeName):
+			raise Exception("Node %s does not exist!", NodeName)
+
+		# Database OP strings
+		selectID = "SELECT ID FROM NodeList WHERE NodeName = '%s'" % NodeName
+		addevent = "INSERT INTO EventList VALUES (DEFAULT, (%s), '%s', DEFAULT)" % (selectID, EventInfo)
+
+		# Execute command
+		cursor.execute(addevent)
+
+		# Commit changes
+		self.__database.commit()
+
+		# Close database cursor
+		cursor.close()
+
+	#
+	# Print operations
+	#
+
+	def printNodeList(self):
+		cursor = self.__database.cursor()
+
+		list = ("SELECT * FROM NodeList ORDER BY ID ASC")
+
+		cursor.execute(list)
+
+		for (NodeID, NodeName, NodeType) in cursor:
+			print("NodeID: {}, NodeName: {}, NodeType: {}".format(NodeID, NodeName.decode(), NodeType))
+
+		cursor.close()
+
+	def printNodeTypes(self):
 		cursor = self.__database.cursor()
 
 		list = ("SELECT * FROM NodeType ORDER BY NodeID ASC")
@@ -57,24 +171,14 @@ class CloudStorage:
 
 		cursor.close()
 
-	def printListOfNodes(self):
+	def printEventList(self):
 		cursor = self.__database.cursor()
 
-		list = ("SELECT * FROM NodeList ORDER BY ID ASC")
+		list = ("SELECT * FROM EventList ORDER BY TimeStamp ASC")
 
 		cursor.execute(list)
 
-		for (Null, NodeID, NodeName) in cursor:
-			print("NodeID: {}, NodeName: {}".format(NodeID, NodeName.decode()))
+		for (NodeID, NodeName, EventInfo, TimeStamp) in cursor:
+			print("NodeID: {}, NodeName: {}, EventInfo: {}, TimeStamp: {}".format(NodeID, NodeName, EventInfo.decode(), TimeStamp))
 
 		cursor.close()
-
-# Main program
-
-cloud = CloudStorage()
-
-cloud.connect()
-
-cloud.getListOfNodeTypes()
-
-cloud.close()
