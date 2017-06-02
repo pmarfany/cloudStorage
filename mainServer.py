@@ -4,6 +4,7 @@
 import sys
 from ServerSocket import ServerSocket
 from CloudStorage import CloudStorage
+from DataParser import DataParser
 
 # Default data
 serverName = '192.168.1.46'
@@ -20,10 +21,12 @@ if (len(sys.argv) > 2):
 # Creem un 'serverSocket'
 socket = ServerSocket(serverName, serverPort)
 
-# Creem un objecte de la classe 'CloudStorage
+# Creem un objecte de la classe 'CloudStorage'
 cloudStorage = CloudStorage()
-
 cloudStorage.connect()
+
+# Creem un objecte de la classe 'DataParser'
+dataParser = DataParser(cloudStorage)
 
 # Bucle infinit
 while True:
@@ -31,16 +34,10 @@ while True:
 	socket.s_accept()
 
 	# Get dades
-	print(socket.read_data())
+	data = socket.read_data()
 
-	# 'Parse' dades
-	# cloudStorage.addNode("NodeName", "NodeType")
-	# cloudStorage.addNodeType("NodeType")
-	# cloudStorage.addEvent("NodeName", "EventInfo")
-	# ...
-
-	# Enviar resposta
-	socket.send_data("Recibido!")
+	# Parse dades
+	DataParser.decodeAndStorage(data)
 
 	# Tancar socket
 	socket.close_socket()

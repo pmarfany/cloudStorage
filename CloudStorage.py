@@ -49,7 +49,7 @@ class CloudStorage:
 	# Check data operations
 	#
 
-	def __nodeExists(self, NodeName):
+	def nodeExists(self, NodeName):
 		cursor = self.__database.cursor()
 
 		cursor.execute("SELECT * FROM NodeList WHERE NodeName IN ('%s')" % NodeName)
@@ -61,7 +61,7 @@ class CloudStorage:
 
 		return (node is not None);
 
-	def __nodeTypeExists(self, NodeName):
+	def nodeTypeExists(self, NodeName):
 		cursor = self.__database.cursor()
 
 		cursor.execute("SELECT * FROM NodeType WHERE NodeName IN ('%s')" % NodeName)
@@ -82,11 +82,11 @@ class CloudStorage:
 		cursor = self.__database.cursor()
 
 		# Check if 'NodeName' exists
-		if self.__nodeExists(NodeName):
+		if self.nodeExists(NodeName):
 			raise Exception("Node %s already exists!", NodeName)
 
 		# Check if 'NodeType' existes
-		if not self.__nodeTypeExists(NodeType):
+		if not self.nodeTypeExists(NodeType):
 			raise Exception("NodeType %s does not exist!", NodeType)
 
 		# Database OP strings
@@ -107,7 +107,7 @@ class CloudStorage:
 		cursor = self.__database.cursor()
 
 		# Check if 'NodeType' existes
-		if self.__nodeTypeExists(NodeType):
+		if self.nodeTypeExists(NodeType):
 			raise Exception("NodeType %s already exists!", NodeType)
 
 		# Database OP strings
@@ -127,7 +127,7 @@ class CloudStorage:
 		cursor = self.__database.cursor()
 
 		# Check if 'NodeName' exists
-		if not self.__nodeExists(NodeName):
+		if not self.nodeExists(NodeName):
 			raise Exception("Node %s does not exist!", NodeName)
 
 		# Database OP strings
