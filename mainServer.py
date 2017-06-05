@@ -1,13 +1,17 @@
 #!/usr/bin/python3.6
 # *-- coding: utf-8 --*
-
 import sys
+from os import popen
 from ServerSocket import ServerSocket
 from CloudStorage import CloudStorage
 from DataParser import DataParser
 
+# Get my IPAddress
+def getIPAddress():
+    return popen('hostname -I').read().strip()
+
 # Default data
-serverName = '192.168.1.46'
+serverName = getIPAddress()
 serverPort = 10000
 
 # Optional server name argument
