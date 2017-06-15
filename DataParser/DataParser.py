@@ -1,7 +1,10 @@
-from CloudStorage import CloudStorage
-import json
+#!/usr/bin/python3.6
+# *-- coding: utf-8 --*
 
-## DataParser
+import json
+from Storage.CloudStorage import CloudStorage
+
+# DataParser
 class DataParser:
 
 	__cloudStorage = None;
