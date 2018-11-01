@@ -38,7 +38,7 @@ class CloudStorage(StorageModule):
 
 		cursor.close()
 
-		return (node is not None);
+		return (node is not None)
 
 	#
 	# Insert data operations

@@ -33,7 +33,7 @@ class loginStorage(StorageModule):
 
 		cursor.close()
 
-		return (login is not None);
+		return (login is not None)
 
 	#
 	# Funció de register

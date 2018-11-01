@@ -7,7 +7,7 @@ from Storage.loginStorage import loginStorage
 # ParserModule
 class loginParser:
 
-	__loginStorage = None;
+	__loginStorage = None
 
 	STATUS = 'Status'
 	STATUS_LOGIN = 'Login'

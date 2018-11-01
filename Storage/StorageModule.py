@@ -15,10 +15,10 @@ class StorageModule:
 	}
 
 	# Database
-	database = None;
+	database = None
 
 	def __init__(self):
-		pass;
+		pass
 
 	#
 	# Default connection and close operations

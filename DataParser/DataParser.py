@@ -32,10 +32,8 @@ class DataParser:
 		# Comprovar si NO existeix
 		if not self.__cloudStorage.nodeExists(identificador):
 
-			# ¿¿Obtenir tipus?? - igual amb un switch "cutre" en plan:
-				# si "semaforo_n" es Sempahore.
-				# si "SmartCityApp" (aplicació mòbil), doncs, per exemple, "SmartCityApp".
-			#### linia de codi
+			# Obtenir tipus del node
+			tipus = data['type']
 
 			# Comprovar si NO existeix el tipus
 			if not self.__cloudStorage.nodeTypeExists(tipus):
